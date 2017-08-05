@@ -62,10 +62,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   float theta = atan2(y,x);
   float rhodot = (x*ux + y*uy)/rho;
   
-  VectorXd z_pred = VectorXd(3);
+  VectorXd z_pred = VectorXd::Zero(3);
   z_pred << rho, theta, rhodot;
 
   VectorXd Y = z - z_pred;
+  //angle normalisation
+  Y[1] = atan2(sin(Y[1]),cos(Y[1]));
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
